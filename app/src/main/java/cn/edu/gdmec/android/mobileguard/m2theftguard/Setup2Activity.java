@@ -22,7 +22,7 @@ public class Setup2Activity extends BaseSetUpActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup_2);
         ((RadioButton) findViewById(R.id.rb_second)).setChecked(true);
-        mTelephonyManager = (TelephonyManager) getSystemService(TELECOM_SERVICE);
+        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         mBindSIMBtn = (Button) findViewById(R.id.btn_bind_sim);
         mBindSIMBtn.setOnClickListener(this);
         if (isBind()){
