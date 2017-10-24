@@ -121,7 +121,7 @@
 
             <TextView
                 style="@style/textview16sp"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:drawableLeft="@drawable/sim_alarm_icon_small"
