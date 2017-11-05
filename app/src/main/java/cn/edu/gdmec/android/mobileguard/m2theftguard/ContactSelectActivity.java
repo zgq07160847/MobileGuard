@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -40,7 +39,7 @@ public class ContactSelectActivity extends AppCompatActivity implements View.OnC
     };
     protected void onCreate(Bundle savedInstancesState){
         super.onCreate(savedInstancesState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_contact_select);
         initView();
     }

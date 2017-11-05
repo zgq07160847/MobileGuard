@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.Window;
 import android.widget.Toast;
 
 import cn.edu.gdmec.android.mobileguard.R;
@@ -32,7 +31,7 @@ public abstract class BaseSetUpActivity extends AppCompatActivity{
     }
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         sp=getSharedPreferences("config",MODE_PRIVATE);
 
         mGestureDetector = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
