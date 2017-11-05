@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -61,6 +62,7 @@ public class ContactSelectActivity extends AppCompatActivity implements View.OnC
                 ContactInfo item = (ContactInfo) adapter.getItem(position);
                 Intent intent = new Intent();
                 intent.putExtra("phone",item.phone);
+                intent.putExtra("name",item.name);
                 setResult(0,intent);
                 finish();
             }
