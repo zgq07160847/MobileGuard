@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -29,7 +30,7 @@ public class SecurityPhoneActivity extends AppCompatActivity implements View.OnC
     private BlackNumberDao dao;
     private ListView mListView;
     private int pagenumber = 0;
-    private int pagesize = 4;
+    private int pagesize = 999;
     private int totalNumber;
     private List<BlackContactInfo> pageBlackNumber = new ArrayList<BlackContactInfo>();
     private BlackContactAdapter adapter;
@@ -99,6 +100,7 @@ public class SecurityPhoneActivity extends AppCompatActivity implements View.OnC
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_security_phone);
         initView();
         fillData();
