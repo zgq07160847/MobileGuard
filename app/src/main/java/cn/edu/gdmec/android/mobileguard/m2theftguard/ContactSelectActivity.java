@@ -40,6 +40,7 @@ public class ContactSelectActivity extends AppCompatActivity implements View.OnC
     };
     protected void onCreate(Bundle savedInstancesState){
         super.onCreate(savedInstancesState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_contact_select);
         initView();
     }
