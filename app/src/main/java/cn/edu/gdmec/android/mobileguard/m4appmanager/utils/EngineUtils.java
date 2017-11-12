@@ -61,9 +61,9 @@ public class EngineUtils {
         builder.setMessage("Version："+"1.2"+"\nInstall time："+"2017年11月12日下午21:33:00"
                 +"\nCertificate issuer："+"CN=York Cui,OU=Computer&Design College,O=Guangdong Mechanical" +
                 "&Electrical Polytechnic,L=Guangzhou,ST=Guangdong,C=CN"
-                +"\nPermissions："+"android.permission.INTERNET"+"android.permission.WRITE_EXTERNAL_STORAGE"
-        +"android.permission.READ+PHONE_STATE"+"android.permission.RECEIVE_BOOT_COMP;ETED"
-        +"android.permission.PEAD_CONTACTS");
+                +"\nPermissions："+"\nandroid.permission.INTERNET"+"\nandroid.permission.WRITE_EXTERNAL_STORAGE"
+        +"\nandroid.permission.READ+PHONE_STATE"+"\nandroid.permission.RECEIVE_BOOT_COMP;ETED"
+        +"\nandroid.permission.PEAD_CONTACTS");
 
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 
