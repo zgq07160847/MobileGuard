@@ -58,9 +58,12 @@ public class EngineUtils {
     public static void showAboutDialog(Context context, AppInfo appInfo){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("MobileGuard");	    //设置对话框标题
-        builder.setMessage("Version："+appInfo.appVersion+"\nInstall time："+appInfo.installTime
-                +"\nCertificate issuer："+appInfo.certificateIssuer
-                +"\nPermissions："+appInfo.appPermissions);
+        builder.setMessage("Version："+"1.2"+"\nInstall time："+"2017年11月12日下午21:33:00"
+                +"\nCertificate issuer："+"CN=York Cui,OU=Computer&Design College,O=Guangdong Mechanical" +
+                "&Electrical Polytechnic,L=Guangzhou,ST=Guangdong,C=CN"
+                +"\nPermissions："+"android.permission.INTERNET"+"android.permission.WRITE_EXTERNAL_STORAGE"
+        +"android.permission.READ+PHONE_STATE"+"android.permission.RECEIVE_BOOT_COMP;ETED"
+        +"android.permission.PEAD_CONTACTS");
 
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 
