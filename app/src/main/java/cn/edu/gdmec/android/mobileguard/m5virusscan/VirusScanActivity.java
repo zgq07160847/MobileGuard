@@ -3,6 +3,9 @@ package cn.edu.gdmec.android.mobileguard.m5virusscan;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,10 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import cn.edu.gdmec.android.mobileguard.R;
+import cn.edu.gdmec.android.mobileguard.m1home.utils.VersionUpdateUtils;
+import cn.edu.gdmec.android.mobileguard.m5virusscan.dao.AntiVirusDao;
 
 /**
  * Created by 天地科技 on 2017/11/15.
@@ -21,13 +27,14 @@ import cn.edu.gdmec.android.mobileguard.R;
 
 public class VirusScanActivity extends AppCompatActivity implements View.OnClickListener{
     private TextView mLastTimeTV;
+    private TextView mDbVersionTV;
     private SharedPreferences mSP;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_virus_scan);
         mSP=getSharedPreferences("config",MODE_PRIVATE);
-        copyDB("antivirus.db");
+        copyDB("antivirus.db","");
         initView();
     }
     @Override
@@ -36,16 +43,53 @@ public class VirusScanActivity extends AppCompatActivity implements View.OnClick
         mLastTimeTV.setText(string);
         super.onResume();
     }
-    private void copyDB(final String dbname){
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            AntiVirusDao dao = new AntiVirusDao(VirusScanActivity.this);
+            String dbVersion = dao.getVirusDbVersion();
+            mDbVersionTV = (TextView) findViewById(R.id.tv_dbversion);
+            mDbVersionTV.setText("病毒数据库版本:"+dbVersion);
+            UpdateDb(dbVersion);
+            super.handleMessage(msg);
+        }
+    };
+    VersionUpdateUtils.DownloadCallback downloadCallback = new VersionUpdateUtils.DownloadCallback() {
+        @Override
+        public void afterDownload(String filename) {
+            copyDB("antivirus.db", Environment.getExternalStoragePublicDirectory("/download/").getPath());
+        }
+    };
+
+    final private void UpdateDb(String localDbVersion){
+        final VersionUpdateUtils versionUpdateUtils = new VersionUpdateUtils(localDbVersion,VirusScanActivity.this,downloadCallback,null);
+        new Thread(){
+
+            @Override
+            public void run() {
+                versionUpdateUtils.getCloudVersion("http://android2017.duapp.com/virusupdateinfo.html");
+            }
+        }.start();
+
+    }
+    private void copyDB(final String dbname,final String fromPath){
         new Thread(){
             public void run(){
                 try {
                     File file=new File(getFilesDir(),dbname);
-                    if (file.exists()&&file.length()>0){
-                        Log.i("VirusScanActivity","数据库已存在!");
-                        return;
+                    if(file.exists()&&file.length()>0&&fromPath.equals("")){
+                        Log.i("VirusScanActivity","数据库已存在！");
+                        handler.sendEmptyMessage(0);
+                        return ;
                     }
-                    InputStream is=getAssets().open(dbname);
+                    InputStream is;
+                    if (fromPath.equals("")){
+                        is = getAssets().open(dbname);
+                    }else{
+                        file = new File(fromPath,
+                                "antivirus.db");
+                        is= new FileInputStream(file);
+                    }
                     FileOutputStream fos=openFileOutput(dbname,MODE_PRIVATE);
                     byte[]buffer=new byte[1024];
                     int len=0;
@@ -54,6 +98,7 @@ public class VirusScanActivity extends AppCompatActivity implements View.OnClick
                     }
                     is.close();
                     fos.close();
+                    handler.sendEmptyMessage(0);
                 }catch (Exception e){
                     e.printStackTrace();
                 }

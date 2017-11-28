@@ -31,7 +31,7 @@
                 <TextView
                     style="@style/wrapcontent"
                     android:layout_marginTop="15dp"
-                    android:text="宸叉竻鐞嗗瀮鍦炬枃浠?"
+                    android:text="已清理垃圾文件："
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     />
