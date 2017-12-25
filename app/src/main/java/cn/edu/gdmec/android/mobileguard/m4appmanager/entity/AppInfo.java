@@ -19,6 +19,12 @@ public class AppInfo {
     public String appVersion;
     public String appPermissions;
     public String installTime;
+    public String version;
+    public String InstallTime;
+    public String signature;
+    public String permissions;
+    public String activityName;
+    public  boolean isLock;
 
     public String getAppLocation(boolean isInRoom){
         if (isInRoom){
