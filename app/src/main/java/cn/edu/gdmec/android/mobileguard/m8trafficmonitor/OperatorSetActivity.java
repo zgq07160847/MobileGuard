@@ -11,7 +11,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import cn.edu.gdmec.android.mobileguard.R;
-import cn.edu.gdmec.android.mobileguard.m8trafficmonitor.service.TrafficMonitoringService;
 
 /**
  * Created by Administrator on 2017/12/3 0003.
@@ -54,7 +53,7 @@ public class OperatorSetActivity extends AppCompatActivity implements View.OnCli
                 edit.putInt("operator", mSelectSP.getSelectedItemPosition() + 1);
                 edit.putBoolean("isset_operator", true);
                 edit.commit();
-                startActivity(new Intent(this, TrafficMonitoringService.class));
+                startActivity(new Intent(this, TrafficMonitoringActivity.class));
                 finish();
                 break;
         }

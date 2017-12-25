@@ -1,11 +1,14 @@
 package cn.edu.gdmec.android.mobileguard.m8trafficmonitor;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -39,6 +42,21 @@ public class TrafficMonitoringActivity extends AppCompatActivity implements View
     private ImageView mRemindIMGV;
     private TextView mRemindTV;
     private CorrectFlowReceiver receiver;
+    private TrafficMonitoringService trafficMonitoringService =null;
+    private boolean isBound;
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            isBound = true;
+            TrafficMonitoringService.MyBinder binder = (TrafficMonitoringService.MyBinder) iBinder;
+            trafficMonitoringService = binder.getService();
+            trafficMonitoringService.getUsedFlow();
+            System.out.println("Usedflow:"+trafficMonitoringService.getUsedFlow());
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+        }
+    };
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -49,9 +67,12 @@ public class TrafficMonitoringActivity extends AppCompatActivity implements View
             startActivity(new Intent(this, OperatorSetActivity.class));
             finish();
         }
-        if (!SystemInfoUtils.isServiceRunning(this,"cn.edu.gdmec.android.mobileguard.m8trafficmonitor.service.TrafficMonitoringService")){
-            startActivity(new Intent(this, TrafficMonitoringService.class));
+        if (!SystemInfoUtils
+                .isServiceRunning(this,
+                        "cn.edu.gdmec.android.mobileguard.m8trafficmonitor.service.TrafficMonitoringService")) {
+            startService(new Intent(this, TrafficMonitoringService.class));
         }
+        bindService(new Intent(this, TrafficMonitoringService.class),conn,BIND_AUTO_CREATE);
         initView();
         registReceiver();
         initData();
@@ -64,7 +85,7 @@ public class TrafficMonitoringActivity extends AppCompatActivity implements View
         mLeftImgv.setOnClickListener(this);
         mLeftImgv.setImageResource(R.drawable.back);
         ImageView mRightImgv = (ImageView) findViewById(R.id.imgv_rightbtn);
-        mRemindIMGV.setImageResource(R.drawable.processmanager_setting_icon);
+        mRightImgv.setImageResource(R.drawable.processmanager_setting_icon);
         mRightImgv.setOnClickListener(this);
         mCorrectFlowBtn = (Button) findViewById(R.id.btn_correction_flow);
         mCorrectFlowBtn.setOnClickListener(this);
@@ -75,16 +96,16 @@ public class TrafficMonitoringActivity extends AppCompatActivity implements View
         mRemindTV = (TextView) findViewById(R.id.tv_traffic_remind);
     }
 
-    private void initData(){
-        long totalflow = mSP.getLong("totalflow",0);
-        long usedflow = mSP.getLong("usedflow",0);
-        if (totalflow > 0 & usedflow >= 0){
+    private void initData() {
+        long totalflow = mSP.getLong("totalflow", 0);
+        long usedflow = mSP.getLong("usedflow", 0);
+        if (totalflow > 0 & usedflow >= 0) {
             float scale = usedflow / totalflow;
-            if (scale > 0.9){
+            if (scale > 0.9) {
                 mRemindIMGV.setEnabled(false);
                 mRemindTV.setText("您的套餐流量即将用完！");
-            }else{
-                mRemindIMGV.setEnabled(false);
+            } else {
+                mRemindIMGV.setEnabled(true);
                 mRemindTV.setText("本月流量充足请放心使用");
             }
         }
@@ -95,10 +116,10 @@ public class TrafficMonitoringActivity extends AppCompatActivity implements View
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dataString = sdf.format(date);
         long moblieGPRS = dao.getMoblieGPRS(dataString);
-        if (moblieGPRS < 0){
+        if (moblieGPRS < 0) {
             moblieGPRS = 0;
         }
-        mToDayTV.setText("本月已用：" + Formatter.formatFileSize(this, moblieGPRS));
+        mToDayTV.setText("本日已用：" + Formatter.formatFileSize(this, moblieGPRS));
     }
 
     private void registReceiver(){
@@ -121,12 +142,13 @@ public class TrafficMonitoringActivity extends AppCompatActivity implements View
                 SmsManager smsManager = SmsManager.getDefault();
                 switch (i){
                     case 0:
-                        Toast.makeText(this, "您还没有设置运营商信息", 0).show();
+                        Toast.makeText(this, "您还没有设置运营商信息", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
                         smsManager.sendTextMessage("10086", null, "CXLL", null,null);
                         break;
                     case 2:
+                        smsManager.sendTextMessage("10010", null, "CXLL", null, null);
                         break;
                     case 3:
                         break;
@@ -200,5 +222,6 @@ public class TrafficMonitoringActivity extends AppCompatActivity implements View
             receiver = null;
         }
         super.onDestroy();
+        unbindService(conn);
     }
 }
